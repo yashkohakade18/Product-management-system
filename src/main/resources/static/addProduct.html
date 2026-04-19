@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Product</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h2 {
+      color: #111827;
+    }
+
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Add Product</h2>
+
+<input id="name" placeholder="Product Name">
+<input id="brand" placeholder="Brand">
+<input id="price" type="number" placeholder="Price">
+
+<button onclick="addProduct()">Add Product</button>
+
+<script>
+
+const API = "http://localhost:8080/api/products";
+
+async function addProduct() {
+  try {
+    const productName = document.getElementById("name").value.trim();
+    const brand = document.getElementById("brand").value.trim();
+    const price = document.getElementById("price").value;
+
+    // validation
+    if (!productName || !brand || !price) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    // ✅ FIXED PAYLOAD (your bug was here)
+    const payload = {
+      productname: productName,   // matches backend DTO
+      brand: brand,
+      price: Number(price)        // ensure number
+    };
+
+    console.log("Sending:", payload);
+
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to add product");
+    }
+
+    alert("✅ Product Added Successfully");
+
+    // redirect to dashboard
+    window.location.href = "home.html";
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ Failed: " + error.message);
+  }
+}
+
+</script>
+
+</body>
+</html>

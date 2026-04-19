@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      margin: 0;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header a {
+      background: #2563eb;
+      padding: 8px 15px;
+      border-radius: 6px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .delete {
+      background: #ef4444;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 18px;
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>Product Dashboard</h2>
+  <a href="addproduct.html">+ Add Product</a>
+</header>
+
+<div class="container">
+  <div class="grid" id="products"></div>
+</div>
+
+<script>
+
+const API = "http://localhost:8080/api/products";
+
+async function loadProducts() {
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
+
+    console.log("FULL RESPONSE:", json);
+
+    const list = json.data;
+
+    if (!list || list.length === 0) {
+      document.getElementById("products").innerHTML =
+        "<div class='empty'>No products found</div>";
+      return;
+    }
+
+    let html = "";
+
+    list.forEach(p => {
+      html += `
+        <div class="card">
+          <h3>${p.productName}</h3>
+          <p><strong>Brand:</strong> ${p.brand}</p>
+          <p><strong>Price:</strong> ₹ ${p.price}</p>
+
+          <button class="btn delete" onclick="deleteProduct(${p.id})">
+            Delete
+          </button>
+        </div>
+      `;
+    });
+
+    document.getElementById("products").innerHTML = html;
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("products").innerHTML =
+      "<div class='empty'>❌ Error loading products</div>";
+  }
+}
+
+async function deleteProduct(id) {
+  try {
+    await fetch(`${API}/${id}`, { method: "DELETE" });
+    loadProducts();
+  } catch {
+    alert("Delete failed");
+  }
+}
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
