@@ -15,10 +15,10 @@ Backend: Spring Boot (Java)
 Database: Postgres SQL
 
 HOME PAGE :
-![home](images/home.png.png)
+![home](dashboard.png)
 
 ADD BOOK PAGE :
-![addbook](images/addbook.png.png)
+![addproduct](addproduct.png)
 ⚙️ Run Locally 
 
 git clone https://github.com/your-username/Product-management-system.git
